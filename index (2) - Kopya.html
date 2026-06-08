@@ -370,6 +370,13 @@ body::before {
   width:40px; height:4px; background:var(--glass-border);
   border-radius:2px; margin:12px auto 0;
 }
+@media (max-height: 700px) {
+  #reserveModal .modal-handle,
+  #waiterModal .modal-handle,
+  #waModal .modal-handle {
+    display: none;
+  }
+}
 .modal-head {
   padding:20px 20px 0;
   display:flex; align-items:center; justify-content:space-between;
@@ -1814,7 +1821,10 @@ function hideTyping() {
 
 function initSwipeToDismiss() {
   document.querySelectorAll('.modal-sheet').forEach(sheet => {
-    const handle = sheet.querySelector('.modal-handle') || sheet.querySelector('.modal-head');
+    let handle = sheet.querySelector('.modal-handle');
+    if (!handle || getComputedStyle(handle).display === 'none') {
+      handle = sheet.querySelector('.modal-head');
+    }
     if (!handle) return;
 
     let startY = 0;
