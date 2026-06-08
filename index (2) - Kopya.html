@@ -372,9 +372,16 @@ body::before {
 }
 @media (max-height: 700px) {
   #reserveModal .modal-handle,
-  #waiterModal .modal-handle,
-  #waModal .modal-handle {
+  #waiterModal .modal-handle {
     display: none;
+  }
+  #reserveModal .modal-sheet,
+  #waiterModal .modal-sheet {
+    padding-top: 12px;
+  }
+  #reserveModal .modal-head,
+  #waiterModal .modal-head {
+    padding-top: 0;
   }
 }
 .modal-head {
