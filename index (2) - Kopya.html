@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#ffffff">
+<title>Sushi Sea — QR Menü</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f4f9ff;
+  --ocean: #e8f4fd;
+  --sea-blue: #56B4F5;
+  --sea-blue-light: #A8D8FF;
+  --sea-blue-dark: #3A9AE0;
+  --white: #ffffff;
+  --text: #111111;
+  --text-light: rgba(0,0,0,0.85);
+  --text-muted: rgba(0,0,0,0.5);
+  --glass: rgba(86,180,245,0.1);
+  --glass-border: rgba(86,180,245,0.25);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 8px 32px rgba(86,180,245,0.15);
+  --shadow-sm: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(86,180,245,0.08) 0%, transparent 70%),
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  z-index:0; pointer-events:none;
+}
+
+.container { position:relative; z-index:1; max-width:480px; margin:0 auto; }
+
+/* ===== LANGUAGE DROPDOWN ===== */
+.lang-bar {
+  display:flex; padding:12px 16px 8px;
+  justify-content:flex-end;
+}
+.lang-dropdown {
+  position:relative;
+}
+.lang-select-btn {
+  display:flex; align-items:center; gap:8px;
+  background:var(--bg2); border:1px solid var(--glass-border);
+  color:var(--text); font-size:12px; font-weight:600;
+  padding:8px 14px; border-radius:12px; cursor:pointer;
+  font-family:'Poppins',sans-serif; transition:all .25s;
+}
+.lang-select-btn:hover { border-color:var(--sea-blue); }
+.lang-select-btn i.fa-chevron-down { font-size:10px; color:var(--sea-blue); transition:transform .25s; }
+.lang-dropdown.open .lang-select-btn i.fa-chevron-down { transform:rotate(180deg); }
+.lang-menu {
+  position:absolute; top:calc(100% + 6px); right:0;
+  background:var(--white); border:1px solid var(--glass-border);
+  border-radius:12px; min-width:140px; overflow:hidden;
+  box-shadow:var(--shadow); display:none; z-index:50;
+}
+.lang-dropdown.open .lang-menu { display:block; }
+.lang-option {
+  display:flex; align-items:center; gap:8px;
+  width:100%; padding:10px 14px; border:none;
+  background:transparent; color:var(--text-light);
+  font-size:12px; font-weight:500; cursor:pointer;
+  font-family:'Poppins',sans-serif; text-align:left;
+  transition:background .2s;
+}
+.lang-option:hover, .lang-option.active {
+  background:rgba(86,180,245,0.15); color:var(--sea-blue-dark);
+}
+
+/* ===== HEADER ===== */
+.header {
+  text-align:center; padding:20px 20px 28px;
+  position:relative;
+}
+.logo-brand {
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:12px;
+}
+.logo-brand img { height:72px; width:auto; }
+.restaurant-sub {
+  font-size:12px; color: var(--sea-blue); letter-spacing:3px;
+  text-transform:uppercase; margin-top:5px; font-weight:500;
+}
+
+/* ===== QUICK ACTION BUTTONS ===== */
+.quick-actions {
+  display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  padding:0 16px 16px;
+}
+.qa-btn {
+  display:flex; align-items:center; gap:10px;
+  background: var(--glass); border:1px solid var(--glass-border);
+  border-radius:var(--radius-sm); padding:13px 15px; cursor:pointer;
+  transition:all .25s; text-decoration:none; color:inherit;
+  position:relative; overflow:hidden;
+}
+.qa-btn::before {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(135deg, transparent, rgba(255,255,255,0.04));
+  opacity:0; transition:.25s;
+}
+.qa-btn:active::before { opacity:1; }
+.qa-btn .icon-wrap {
+  width:38px; height:38px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; flex-shrink:0;
+}
+.qa-btn .btn-text { font-size:12px; font-weight:600; line-height:1.3; }
+.qa-btn .btn-sub { font-size:10px; color:var(--text-muted); margin-top:1px; }
+
+.qa-menu .icon-wrap { background: linear-gradient(135deg,var(--sea-blue-dark),var(--sea-blue)); color:#fff; }
+.qa-reserve .icon-wrap { background: linear-gradient(135deg,var(--sea-blue-dark),var(--sea-blue-light)); color:#000; }
+.qa-waiter .icon-wrap { background: linear-gradient(135deg,var(--sea-blue),var(--sea-blue-light)); color:#000; }
+.qa-wifi .icon-wrap { background: linear-gradient(135deg,var(--sea-blue-light),var(--sea-blue)); color:#fff; }
+
+/* ===== SOCIAL ROW ===== */
+.social-section {
+  padding: 4px 16px 16px;
+}
+.social-label {
+  font-size:10px; color:var(--text-muted); letter-spacing:2px;
+  text-transform:uppercase; text-align:center; margin-bottom:10px;
+}
+.social-row {
+  display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
+}
+.social-btn {
+  width:42px; height:42px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; text-decoration:none; transition:all .25s ease;
+  border:1px solid var(--glass-border);
+}
+.social-btn:hover {
+  transform: translateY(-5px);
+}
+.social-btn:active { transform: translateY(-2px) scale(0.95); }
+.s-ig { background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045); color:#fff; }
+.s-ig:hover { box-shadow: 0 8px 20px rgba(253, 29, 29, 0.4); border-color: #fd1d1d; }
+.s-fb { background:#1877f2; color:#fff; }
+.s-fb:hover { box-shadow: 0 8px 20px rgba(24, 119, 242, 0.4); border-color: #1877f2; }
+.s-tt { background:#111; color:#fff; }
+.s-tt:hover { box-shadow: 0 8px 20px rgba(17, 17, 17, 0.4); border-color: #111; }
+.s-yt { background:#ff0000; color:#fff; }
+.s-yt:hover { box-shadow: 0 8px 20px rgba(255, 0, 0, 0.4); border-color: #ff0000; }
+.s-wa { background:#25d366; color:#fff; }
+.s-wa:hover { box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4); border-color: #25d366; }
+.s-web { background:var(--glass); color:var(--text-light); }
+.s-web:hover { box-shadow: 0 8px 20px rgba(86, 180, 245, 0.3); border-color: var(--sea-blue); background: rgba(86,180,245,0.2); }
+
+/* ===== REVIEWS ROW ===== */
+.review-section { padding:0 16px 16px; }
+.section-title-sm {
+  font-size:10px; color:var(--text-muted); letter-spacing:2px;
+  text-transform:uppercase; text-align:center; margin-bottom:10px;
+}
+.review-row { display:flex; gap:8px; }
+.review-btn {
+  flex:1; display:flex; align-items:center; justify-content:center; gap:7px;
+  padding:10px 8px; border-radius:var(--radius-sm);
+  border:1px solid var(--glass-border); background:var(--glass);
+  text-decoration:none; color:var(--text); font-size:11px; font-weight:600;
+  transition:all .25s;
+}
+.review-btn i { font-size:15px; }
+.review-btn.google i { color:#ea4335; }
+.review-btn.trip i { color:#34e0a1; }
+.review-btn.yandex i { color:#fc3f1d; }
+.review-btn:active { transform:scale(0.96); }
+
+/* ===== MENU SECTION ===== */
+.menu-section { padding:0 16px 20px; }
+.menu-header { margin-bottom:14px; }
+.menu-title {
+  font-family:'Poppins',sans-serif; font-size:22px; font-weight:700;
+}
+.menu-title span { color:var(--sea-blue); }
+.search-wrap {
+  display:flex; align-items:center; gap:10px;
+  background: var(--glass); border:1px solid var(--glass-border);
+  border-radius:30px; padding:9px 16px; margin-bottom:20px;
+}
+.search-wrap input {
+  flex:1; background:none; border:none; outline:none;
+  color:var(--text); font-size:13px; font-family:'Poppins',sans-serif;
+}
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap i { color:var(--sea-blue); font-size:14px; }
+
+/* CATEGORY TABS */
+.cat-scroll {
+  overflow-x:auto; margin:0 -16px 16px; padding:0 16px 4px;
+  scrollbar-width:none;
+}
+.cat-scroll::-webkit-scrollbar { display:none; }
+.cat-row { display:flex; gap:8px; width:max-content; }
+.cat-pill {
+  display:flex; align-items:center; gap:6px;
+  background:var(--bg2); border:1px solid var(--glass-border);
+  color:var(--text-muted); font-size:11px; font-weight:600;
+  padding:8px 14px; border-radius:20px; cursor:pointer;
+  white-space:nowrap; transition:all .25s; letter-spacing:.3px;
+  font-family:'Poppins',sans-serif;
+}
+.cat-pill.active {
+  background:linear-gradient(135deg,var(--sea-blue-dark),var(--sea-blue));
+  border-color:transparent; color:#fff;
+}
+.cat-items { display:flex; flex-direction:column; gap:4px; }
+.cat-active-title {
+  font-size:13px; font-weight:700; letter-spacing:.8px;
+  color:var(--text); text-transform:uppercase; margin-bottom:12px;
+}
+.menu-row {
+  display:flex; align-items:center; gap:12px;
+  padding:10px 8px; border-radius:var(--radius-sm);
+  cursor:pointer; transition:background .2s;
+}
+.menu-row:hover, .menu-row:active { background:var(--bg2); }
+.menu-row-img {
+  width:64px; height:64px; border-radius:10px; flex-shrink:0;
+  object-fit:cover; background:var(--ocean);
+}
+.menu-row-info { flex:1; min-width:0; }
+.menu-row-name {
+  font-size:12px; font-weight:700; color:var(--text);
+  text-transform:uppercase; margin-bottom:3px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.menu-row-desc {
+  font-size:10px; color:var(--text-muted); line-height:1.4;
+  margin-bottom:4px;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.menu-row-price { font-size:13px; font-weight:600; color:var(--sea-blue-dark); }
+
+/* GOOGLE REVIEWS SLIDER */
+.google-section { padding:0 16px 24px; }
+.google-card {
+  background:var(--bg2); border:1px solid var(--glass-border);
+  border-radius:var(--radius); padding:16px;
+}
+.google-header {
+  display:flex; align-items:center; gap:12px; margin-bottom:14px;
+}
+.google-logo {
+  width:40px; height:40px; border-radius:50%;
+  background:var(--white); display:flex; align-items:center;
+  justify-content:center; font-size:20px; color:#4285F4;
+  box-shadow:var(--shadow-sm);
+}
+.google-score { flex:1; }
+.google-score-num {
+  font-size:28px; font-weight:700; color:var(--text); line-height:1;
+}
+.google-score-label { font-size:11px; color:var(--text-muted); margin-top:2px; }
+.google-stars { color:var(--sea-blue); font-size:14px; letter-spacing:2px; }
+.review-slider {
+  display:flex; gap:12px; overflow-x:auto;
+  scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+  padding-bottom:8px; scrollbar-width:none;
+}
+.review-slider::-webkit-scrollbar { display:none; }
+.review-card {
+  flex:0 0 85%; scroll-snap-align:start;
+  background:var(--white); border-radius:var(--radius-sm);
+  padding:14px; border:1px solid var(--glass-border);
+  box-shadow:var(--shadow-sm);
+}
+.review-card-head {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:6px;
+}
+.review-card-name { font-size:12px; font-weight:600; color:var(--text); }
+.review-card-date { font-size:10px; color:var(--text-muted); }
+.review-card-stars { color:var(--sea-blue); font-size:11px; margin-bottom:6px; }
+.review-card-text { font-size:11px; color:var(--text-light); line-height:1.5; }
+.slider-dots {
+  display:flex; justify-content:center; gap:6px; margin-top:10px;
+}
+.slider-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--glass-border); transition:all .25s;
+}
+.slider-dot.active { background:var(--sea-blue); width:18px; border-radius:3px; }
+.google-write-btn {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  width:100%; margin-top:14px; padding:12px;
+  background:linear-gradient(135deg,var(--sea-blue-dark),var(--sea-blue));
+  border:none; border-radius:var(--radius-sm); color:var(--white);
+  font-size:13px; font-weight:600; cursor:pointer;
+  font-family:'Poppins',sans-serif; text-decoration:none;
+  transition:opacity .2s;
+}
+.google-write-btn:hover { opacity:.9; }
+
+/* ===== FLOATING WAITER BTN ===== */
+.waiter-float {
+  position:fixed; bottom:88px; right:18px;
+  width:56px; height:56px; border-radius:50%;
+  background: linear-gradient(135deg,var(--sea-blue-dark),var(--sea-blue));
+  border:none; color:#fff; font-size:22px;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 4px 20px rgba(86,180,245,0.45);
+  cursor:pointer; z-index:100; transition:all .25s;
+  animation: floatPulse 3s ease-in-out infinite;
+}
+.waiter-float:active { transform:scale(0.9); }
+@keyframes floatPulse {
+  0%,100% { box-shadow: 0 4px 20px rgba(86,180,245,0.45); }
+  50% { box-shadow: 0 4px 32px rgba(86,180,245,0.7), 0 0 0 8px rgba(86,180,245,0.1); }
+}
+
+/* ===== WA FLOAT ===== */
+.wa-float {
+  position:fixed; bottom:18px; right:18px;
+  width:56px; height:56px; border-radius:50%;
+  background: linear-gradient(135deg,#128c7e,#25d366);
+  border:none; color:#fff; font-size:24px;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.45);
+  cursor:pointer; z-index:100; transition:all .25s;
+  text-decoration:none;
+}
+.wa-float:active { transform:scale(0.9); }
+
+/* ===== MODALS ===== */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(6px); z-index:200;
+  display:none; align-items:flex-end; justify-content:center;
+}
+.modal-overlay.open { display:flex; }
+.modal-sheet {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  border:1px solid var(--glass-border);
+  border-radius:24px 24px 0 0; width:100%; max-width:480px;
+  max-height:92vh; overflow-y:auto;
+  padding:0 0 30px;
+  animation: slideUp .35s cubic-bezier(0.34,1.56,0.64,1);
+}
+.modal-sheet::-webkit-scrollbar {
+  display: none;
+}
+@keyframes slideUp {
+  from { transform:translateY(100%); opacity:0; }
+  to { transform:translateY(0); opacity:1; }
+}
+.modal-handle {
+  width:40px; height:4px; background:var(--glass-border);
+  border-radius:2px; margin:12px auto 0;
+}
+.modal-head {
+  padding:20px 20px 0;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.modal-title {
+  font-family:'Poppins',sans-serif; font-size:22px; font-weight:700;
+}
+.modal-close {
+  width:36px; height:36px; border-radius:50%;
+  background:var(--glass); border:1px solid var(--glass-border);
+  color:var(--text-muted); font-size:16px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.modal-body { padding:20px 20px 0; }
+
+/* RESERVATION FORM */
+.form-group { margin-bottom:14px; }
+.form-label {
+  display:block; font-size:11px; font-weight:600; letter-spacing:.8px;
+  text-transform:uppercase; color:var(--text-muted); margin-bottom:7px;
+}
+.form-control {
+  width:100%; background: var(--glass); border:1px solid var(--glass-border);
+  border-radius:var(--radius-sm); padding:12px 14px;
+  color:var(--text); font-size:14px; font-family:'Poppins',sans-serif;
+  outline:none; transition:border-color .2s; -webkit-appearance:none;
+}
+.form-control:focus { border-color:var(--sea-blue); }
+.form-control option { background:#fff; color:var(--text); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.person-grid {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:4px;
+}
+.person-btn {
+  aspect-ratio:1; border-radius:10px;
+  background:var(--glass); border:1px solid var(--glass-border);
+  color:var(--text-muted); font-size:13px; font-weight:600;
+  cursor:pointer; transition:all .2s; font-family:'Poppins',sans-serif;
+  display:flex; align-items:center; justify-content:center;
+}
+.person-btn.selected {
+  background: linear-gradient(135deg,var(--sea-blue-dark),var(--sea-blue));
+  border-color:transparent; color:#fff;
+}
+.time-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:7px;
+}
+.time-btn {
+  padding:9px 4px; border-radius:10px; text-align:center;
+  background:var(--glass); border:1px solid var(--glass-border);
+  color:var(--text-muted); font-size:12px; font-weight:600;
+  cursor:pointer; transition:all .2s; font-family:'Poppins',sans-serif;
+}
+.time-btn.selected {
+  background: linear-gradient(135deg,var(--sea-blue-dark),var(--sea-blue));
+  border-color:transparent; color:#fff;
+}
+.btn-submit {
+  width:100%; padding:15px; border-radius:var(--radius);
+  background: linear-gradient(135deg, var(--sea-blue-dark), var(--sea-blue));
+  border:none; color:#fff; font-size:15px; font-weight:700;
+  font-family:'Poppins',sans-serif; cursor:pointer; margin-top:8px;
+  letter-spacing:.3px; transition:all .25s;
+}
+.btn-submit:active { opacity:.85; transform:scale(0.99); }
+.btn-submit:disabled { opacity:.7; cursor:wait; }
+
+/* SUCCESS STATE */
+.success-state {
+  text-align:center; padding:30px 20px 0;
+  display:none;
+}
+.success-icon {
+  width:72px; height:72px; border-radius:50%;
+  background: linear-gradient(135deg,var(--sea-blue-dark),var(--sea-blue));
+  display:flex; align-items:center; justify-content:center;
+  font-size:32px; margin:0 auto 16px;
+  animation: popIn .5s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes popIn {
+  from { transform:scale(0); opacity:0; }
+  to { transform:scale(1); opacity:1; }
+}
+.success-title { font-family:'Poppins',sans-serif; font-size:22px; margin-bottom:8px; }
+.success-sub { color:var(--text-muted); font-size:14px; line-height:1.5; }
+
+/* WAITER MODAL */
+.waiter-status {
+  text-align:center; padding:30px 20px 8px;
+}
+.waiter-anim {
+  width:80px; height:80px; border-radius:50%;
+  background: linear-gradient(135deg,var(--sea-blue-dark),var(--sea-blue));
+  display:flex; align-items:center; justify-content:center;
+  font-size:36px; margin:0 auto 20px;
+  animation: ring 2s ease-in-out infinite;
+}
+@keyframes ring {
+  0%,100% { transform:rotate(0); }
+  10% { transform:rotate(-15deg); }
+  20% { transform:rotate(15deg); }
+  30% { transform:rotate(-10deg); }
+  40% { transform:rotate(10deg); }
+  50% { transform:rotate(0); }
+}
+.waiter-msg { font-family:'Poppins',sans-serif; font-size:20px; margin-bottom:8px; }
+.waiter-sub { color:var(--text-muted); font-size:13px; }
+.table-select {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:20px 0 16px;
+}
+.table-no {
+  aspect-ratio:1; border-radius:10px;
+  background:var(--glass); border:1px solid var(--glass-border);
+  color:var(--text-muted); font-size:13px; font-weight:700;
+  cursor:pointer; transition:all .2s; font-family:'Poppins',sans-serif;
+  display:flex; align-items:center; justify-content:center;
+}
+.table-no.selected {
+  background: linear-gradient(135deg,var(--sea-blue-dark),var(--sea-blue));
+  border-color:transparent; color:#fff;
+}
+.btn-call {
+  width:100%; padding:15px; border-radius:var(--radius);
+  background: linear-gradient(135deg,var(--sea-blue-dark),var(--sea-blue));
+  border:none; color:#fff; font-size:15px; font-weight:700;
+  font-family:'Poppins',sans-serif; cursor:pointer;
+  letter-spacing:.3px; transition:all .25s;
+}
+.btn-call:disabled { opacity:.7; cursor:wait; }
+
+/* AI CHAT */
+.chat-wrap {
+  height:340px; overflow-y:auto; padding:12px 0;
+  display:flex; flex-direction:column; gap:10px;
+  scrollbar-width:thin; scrollbar-color:var(--glass-border) transparent;
+}
+.chat-msg {
+  max-width:85%; padding:10px 14px; border-radius:16px;
+  font-size:13px; line-height:1.5;
+}
+.chat-msg.bot {
+  background: var(--glass); border:1px solid var(--glass-border);
+  align-self:flex-start; border-bottom-left-radius:4px;
+}
+.chat-msg.user {
+  background: linear-gradient(135deg,var(--sea-blue-dark),var(--sea-blue));
+  color:#fff;
+  align-self:flex-end; border-bottom-right-radius:4px;
+}
+.chat-input-wrap {
+  display:flex; gap:8px; margin-top:10px;
+  background: var(--glass); border:1px solid var(--glass-border);
+  border-radius:30px; padding:6px 6px 6px 14px;
+}
+.chat-input {
+  flex:1; background:none; border:none; outline:none;
+  color:var(--text); font-size:13px; font-family:'Poppins',sans-serif;
+}
+.chat-input::placeholder { color:var(--text-muted); }
+.chat-send {
+  width:36px; height:36px; border-radius:50%;
+  background: linear-gradient(135deg,var(--sea-blue-dark),var(--sea-blue));
+  border:none; color:#fff; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; transition:all .2s; flex-shrink:0;
+}
+.chat-typing {
+  display:flex; gap:4px; padding:10px 14px;
+  background:var(--glass); border:1px solid var(--glass-border);
+  border-radius:16px; border-bottom-left-radius:4px;
+  align-self:flex-start; width:fit-content;
+}
+.chat-typing span {
+  width:7px; height:7px; border-radius:50%; background:var(--sea-blue);
+  animation: typingDot 1.2s ease-in-out infinite;
+}
+.chat-typing span:nth-child(2) { animation-delay:.2s; }
+.chat-typing span:nth-child(3) { animation-delay:.4s; }
+@keyframes typingDot {
+  0%,60%,100% { transform:translateY(0); opacity:.4; }
+  30% { transform:translateY(-6px); opacity:1; }
+}
+
+/* WIFI MODAL REDESIGN */
+.wifi-modal-content {
+  text-align: center;
+  padding: 10px 10px 15px;
+}
+.wifi-header-icon {
+  font-size: 44px;
+  color: var(--sea-blue);
+  margin-bottom: 12px;
+}
+.wifi-header-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 24px;
+  font-family: 'Poppins', sans-serif;
+}
+.wifi-card {
+  background: #f8fafd;
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  text-align: left;
+  border: 1px solid rgba(0,0,0,0.01);
+}
+.wifi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+}
+.wifi-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.wifi-card-label {
+  font-size: 11px;
+  color: #8c96a3;
+  font-weight: 500;
+}
+.wifi-card-val {
+  font-size: 16px;
+  font-weight: 600;
+  color: #212529;
+}
+.wifi-copy-btn-new {
+  background: none;
+  border: none;
+  color: var(--sea-blue-dark);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+.wifi-copy-btn-new:active {
+  transform: scale(0.85);
+}
+.wifi-close-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--sea-blue-dark), var(--sea-blue));
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.wifi-close-btn:hover {
+  opacity: 0.9;
+}
+.wifi-close-btn:active {
+  transform: scale(0.98);
+}
+
+/* ITEM DETAIL MODAL */
+.item-detail-img {
+  width:100%; height:200px; object-fit:cover;
+  border-radius:var(--radius) var(--radius) 0 0;
+  background:var(--ocean); display:flex; align-items:center;
+  justify-content:center; font-size:72px; overflow:hidden;
+}
+.item-detail-img img { width:100%; height:100%; object-fit:cover; }
+.item-detail-body { padding:20px; }
+.item-detail-name {
+  font-family:'Poppins',sans-serif; font-size:22px; font-weight:700; margin-bottom:6px;
+}
+.item-detail-desc { color:var(--text-muted); font-size:14px; line-height:1.6; margin-bottom:12px; }
+.item-detail-tags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+.detail-tag {
+  font-size:10px; font-weight:600; padding:4px 10px; border-radius:10px; letter-spacing:.5px;
+  background:var(--glass); border:1px solid var(--glass-border); color:var(--text-muted);
+}
+.item-detail-price {
+  font-size:28px; font-weight:700; color:var(--sea-blue);
+}
+
+/* FOOTER */
+.footer { text-align:center; padding:24px 16px 45px; color:var(--text-muted); font-size:11px; }
+.footer a { color:var(--sea-blue); text-decoration:none; }
+
+/* NO RESULTS */
+.no-results { text-align:center; padding:40px 20px; color:var(--text-muted); }
+.no-results i { font-size:40px; margin-bottom:12px; display:block; }
+
+/* SCROLL TOP */
+.scroll-top {
+  position:fixed; bottom:60px; left:18px;
+  width:42px; height:42px; border-radius:50%;
+  background:var(--glass); border:1px solid var(--glass-border);
+  color:var(--text-muted); font-size:16px;
+  display:none; align-items:center; justify-content:center;
+  cursor:pointer; z-index:99; transition:all .25s;
+}
+.scroll-top.visible { display:flex; }
+
+/* DIVIDER */
+.section-divider {
+  height:1px; background: linear-gradient(90deg,transparent,var(--glass-border),transparent);
+  margin:4px 16px 16px;
+}
+
+/* STARS */
+.stars { color:var(--sea-blue); font-size:13px; letter-spacing:2px; padding-top: 5px;}
+.stars i { margin:0 1px; }
+
+/* DATE DISPLAY */
+.date-display {
+  background:var(--glass); border:1px solid var(--glass-border);
+  border-radius:var(--radius-sm); padding:14px; text-align:center;
+  margin-bottom:14px;
+}
+.date-nav { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.date-nav-btn {
+  width:36px; height:36px; border-radius:10px;
+  background:var(--glass); border:1px solid var(--glass-border);
+  color:var(--text); cursor:pointer; font-size:14px;
+  display:flex; align-items:center; justify-content:center;
+}
+.date-current { font-size:15px; font-weight:600; flex:1; text-align:center; color:var(--text); }
+
+/* Responsive */
+@media(max-width:360px) {
+  .logo-brand img { height:60px; }
+  .person-grid { grid-template-columns:repeat(4,1fr); }
+  .time-grid { grid-template-columns:repeat(3,1fr); }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- LANGUAGE DROPDOWN -->
+  <div class="lang-bar">
+    <div class="lang-dropdown" id="langDropdown">
+      <button class="lang-select-btn" onclick="toggleLangMenu(event)">
+        <i class="fas fa-globe"></i>
+        <span id="langLabel">🇹🇷 Türkçe</span>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+      <div class="lang-menu">
+        <button class="lang-option active" data-lang="TR" onclick="setLang('TR')">🇹🇷 Türkçe</button>
+        <button class="lang-option" data-lang="EN" onclick="setLang('EN')">🇬🇧 English</button>
+        <button class="lang-option" data-lang="DE" onclick="setLang('DE')">🇩🇪 Deutsch</button>
+        <button class="lang-option" data-lang="RU" onclick="setLang('RU')">🇷🇺 Русский</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-brand">
+      <img src="logo.png" alt="Sushi Sea">
+    </div>
+    <div class="restaurant-sub" data-i18n="tagline">Japanese · Fusion · Rolls</div>
+    <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="quick-actions">
+    <div class="qa-btn qa-menu" onclick="scrollToMenu()">
+      <div class="icon-wrap"><i class="fas fa-utensils"></i></div>
+      <div>
+        <div class="btn-text" data-i18n="menu">Menu</div>
+        <div class="btn-sub" data-i18n="seeAll">See all dishes</div>
+      </div>
+    </div>
+    <div class="qa-btn qa-reserve" onclick="openModal('reserveModal')">
+      <div class="icon-wrap"><i class="fas fa-calendar-check"></i></div>
+      <div>
+        <div class="btn-text" data-i18n="reserve">Reservation</div>
+        <div class="btn-sub" data-i18n="bookTable">Book a table</div>
+      </div>
+    </div>
+    <div class="qa-btn qa-waiter" onclick="openModal('waiterModal')">
+      <div class="icon-wrap"><i class="fas fa-bell"></i></div>
+      <div>
+        <div class="btn-text" data-i18n="callWaiter">Call Waiter</div>
+        <div class="btn-sub" data-i18n="fastService">Fast service</div>
+      </div>
+    </div>
+    <div class="qa-btn qa-wifi" onclick="openModal('wifiModal')">
+      <div class="icon-wrap"><i class="fas fa-wifi"></i></div>
+      <div>
+        <div class="btn-text">Wi-Fi</div>
+        <div class="btn-sub" data-i18n="freeInternet">Free internet</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- SOCIAL MEDIA -->
+  <div class="social-section">
+    <div class="social-label" data-i18n="followUs">Follow us</div>
+    <div class="social-row">
+      <a href="https://www.instagram.com/" target="_blank" class="social-btn s-ig"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.facebook.com/" target="_blank" class="social-btn s-fb"><i class="fab fa-facebook-f"></i></a>
+      <a href="https://www.tiktok.com/tr-TR/" target="_blank" class="social-btn s-tt"><i class="fab fa-tiktok"></i></a>
+      <!-- <a href="https://youtube.com/@sushisea" target="_blank" class="social-btn s-yt"><i class="fab fa-youtube"></i></a> -->
+      <a href="https://wa.me/c/905446893142" target="_blank" class="social-btn s-wa"><i class="fab fa-whatsapp"></i></a>
+      <a href="https://www.sushi-sea.com.tr/tr" class="social-btn s-web"><i class="fas fa-globe"></i></a>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- MENU -->
+  <div class="menu-section" id="menuSection">
+    <div class="menu-header">
+      <div class="menu-title" data-i18n="ourMenu">Our <span>Menu</span></div>
+    </div>
+    <div class="search-wrap">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" placeholder="Search dishes..." data-i18n-ph="searchPh" oninput="filterMenu()">
+    </div>
+    <div class="cat-scroll">
+      <div class="cat-row" id="catRow"></div>
+    </div>
+    <div id="catActiveTitle" class="cat-active-title"></div>
+    <div id="menuProducts" class="cat-items"></div>
+    <div id="searchResults" style="display:none;"></div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- GOOGLE REVIEWS (bottom slider) -->
+  <div class="google-section">
+    <div class="section-title-sm" data-i18n="googleReviews">Google Reviews</div>
+    <div class="google-card" id="googleReviewsCard"></div>
+  </div>
+
+  <div class="footer">
+    <div class="stars" style="margin-bottom:6px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+    <div>Sushi Sea © 2024</div>
+    <div style="margin-top:4px;">Powered by <a href="#">QR Menu</a></div>
+  </div>
+</div>
+
+<!-- FLOATING BUTTONS -->
+<button class="waiter-float" onclick="openModal('waiterModal')" title="Call Waiter">
+  <i class="fas fa-bell"></i>
+</button>
+<a href="#" class="wa-float" onclick="openWAChat(event)" title="WhatsApp AI">
+  <i class="fab fa-whatsapp"></i>
+</a>
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <i class="fas fa-chevron-up"></i>
+</div>
+
+<!-- ===== RESERVATION MODAL ===== -->
+<div class="modal-overlay" id="reserveModal" onclick="closeModalOutside(event,'reserveModal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <div class="modal-title"><i class="fas fa-calendar-check" style="color:var(--sea-blue);margin-right:8px;"></i><span data-i18n="reserve">Reservation</span></div>
+      <button class="modal-close" onclick="closeModal('reserveModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="reserveForm">
+      <!-- PERSONS -->
+      <div class="form-group">
+        <label class="form-label" data-i18n="persons">Number of Guests</label>
+        <div class="person-grid" id="personGrid">
+          <button class="person-btn" onclick="selectPerson(1)">1</button>
+          <button class="person-btn" onclick="selectPerson(2)">2</button>
+          <button class="person-btn" onclick="selectPerson(3)">3</button>
+          <button class="person-btn" onclick="selectPerson(4)">4</button>
+          <button class="person-btn" onclick="selectPerson(5)">5</button>
+          <button class="person-btn" onclick="selectPerson(6)">6</button>
+          <button class="person-btn" onclick="selectPerson(7)">7</button>
+          <button class="person-btn" onclick="selectPerson(8)">8</button>
+          <button class="person-btn" onclick="selectPerson(10)">10</button>
+          <button class="person-btn" onclick="selectPerson(15)">15+</button>
+        </div>
+      </div>
+
+      <!-- DATE -->
+      <div class="form-group">
+        <label class="form-label" data-i18n="date">Date</label>
+        <div class="date-display">
+          <div class="date-nav">
+            <button class="date-nav-btn" onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i></button>
+            <div class="date-current" id="dateDisplay">—</div>
+            <button class="date-nav-btn" onclick="changeDate(1)"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIME -->
+      <div class="form-group">
+        <label class="form-label" data-i18n="time">Time</label>
+        <div class="time-grid" id="timeGrid">
+          <button class="time-btn" onclick="selectTime('12:00')">12:00</button>
+          <button class="time-btn" onclick="selectTime('12:30')">12:30</button>
+          <button class="time-btn" onclick="selectTime('13:00')">13:00</button>
+          <button class="time-btn" onclick="selectTime('13:30')">13:30</button>
+          <button class="time-btn" onclick="selectTime('14:00')">14:00</button>
+          <button class="time-btn" onclick="selectTime('17:00')">17:00</button>
+          <button class="time-btn" onclick="selectTime('18:00')">18:00</button>
+          <button class="time-btn" onclick="selectTime('18:30')">18:30</button>
+          <button class="time-btn" onclick="selectTime('19:00')">19:00</button>
+          <button class="time-btn" onclick="selectTime('19:30')">19:30</button>
+          <button class="time-btn" onclick="selectTime('20:00')">20:00</button>
+          <button class="time-btn" onclick="selectTime('20:30')">20:30</button>
+          <button class="time-btn" onclick="selectTime('21:00')">21:00</button>
+          <button class="time-btn" onclick="selectTime('21:30')">21:30</button>
+          <button class="time-btn" onclick="selectTime('22:00')">22:00</button>
+          <button class="time-btn" onclick="selectTime('22:30')">22:30</button>
+        </div>
+      </div>
+
+      <!-- NAME + PHONE -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" data-i18n="fullName">Full Name</label>
+          <input type="text" class="form-control" id="resName" placeholder="John Doe" data-i18n-ph="namePh">
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="phone">Phone</label>
+          <input type="tel" class="form-control" id="resPhone" placeholder="+90 5XX XXX XX XX">
+        </div>
+      </div>
+
+      <!-- EMAIL -->
+      <div class="form-group">
+        <label class="form-label">E-Mail</label>
+        <input type="email" class="form-control" id="resEmail" placeholder="your@email.com">
+      </div>
+
+      <!-- SPECIAL -->
+      <div class="form-group">
+        <label class="form-label" data-i18n="special">Special Requests</label>
+        <textarea class="form-control" id="resNote" rows="3" placeholder="Allergies, birthday, etc..." data-i18n-ph="specialPh" style="resize:none;"></textarea>
+      </div>
+
+      <button class="btn-submit" id="btnSubmitReserve" onclick="submitReservation()" data-i18n="bookNow">Book Now</button>
+    </div>
+
+    <div class="success-state" id="reserveSuccess">
+      <div class="success-icon"><i class="fas fa-check"></i></div>
+      <div class="success-title" data-i18n="successTitle">Reservation Received!</div>
+      <div class="success-sub" data-i18n="successSub">We'll confirm your booking via WhatsApp or phone shortly. Thank you!</div>
+      <div style="margin-top:16px;padding:16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;" id="resSummary"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;">
+        <a id="btnReserveWA" class="btn-submit" style="margin-top:0;background:linear-gradient(135deg, #25d366, #128c7e);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;" target="_blank"><i class="fab fa-whatsapp"></i> <span data-i18n="sendWhatsApp">Send via WhatsApp</span></a>
+        <a id="btnReserveSMS" class="btn-submit" style="margin-top:0;background:linear-gradient(135deg, var(--sea-blue-dark), var(--sea-blue));text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;" target="_blank"><i class="fas fa-sms"></i> <span data-i18n="sendSMS">Send via SMS</span></a>
+      </div>
+      <button class="btn-submit" style="margin-top:12px;" onclick="closeModal('reserveModal')" data-i18n="close">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WAITER MODAL ===== -->
+<div class="modal-overlay" id="waiterModal" onclick="closeModalOutside(event,'waiterModal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <div class="modal-title"><i class="fas fa-bell" style="color:var(--sea-blue);margin-right:8px;"></i><span data-i18n="callWaiter">Call Waiter</span></div>
+      <button class="modal-close" onclick="closeModal('waiterModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="waiter-status" id="waiterDefault">
+        <div class="waiter-anim"><i class="fas fa-concierge-bell"></i></div>
+        <div class="waiter-msg" data-i18n="whichTable">Which table are you at?</div>
+        <div class="waiter-sub" data-i18n="selectTable">Select your table number</div>
+        <div class="table-select" id="tableGrid"></div>
+        <button class="btn-call" id="btnCallWaiter" onclick="callWaiter()" data-i18n="callNow">Call Waiter Now</button>
+      </div>
+      <div class="success-state" id="waiterSuccess">
+        <div class="success-icon"><i class="fas fa-concierge-bell"></i></div>
+        <div class="success-title" data-i18n="waiterCalled">Waiter on the way!</div>
+        <div class="success-sub" data-i18n="waiterSub">Your waiter will be with you in a moment.</div>
+        <button class="btn-submit" style="margin-top:20px;" onclick="resetWaiter()" data-i18n="callAgain">Call Again</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WIFI MODAL ===== -->
+<div class="modal-overlay" id="wifiModal" onclick="closeModalOutside(event,'wifiModal')">
+  <div class="modal-sheet" style="padding: 24px 16px 20px; position: relative;">
+    <div class="modal-handle" style="margin-top: -12px; margin-bottom: 8px;"></div>
+    <button class="modal-close" style="position: absolute; top: 16px; right: 16px;" onclick="closeModal('wifiModal')"><i class="fas fa-times"></i></button>
+    <div class="wifi-modal-content">
+      <div class="wifi-header-icon">
+        <i class="fas fa-wifi"></i>
+      </div>
+      <div class="wifi-header-title">Wi-Fi</div>
+      
+      <div class="wifi-card" onclick="copyWifiText('SushiSea_Guest', this)">
+        <div class="wifi-card-info">
+          <span class="wifi-card-label" data-i18n="wifiName">Network Name</span>
+          <span class="wifi-card-val">SushiSea_Guest</span>
+        </div>
+        <button class="wifi-copy-btn-new">
+          <i class="far fa-copy"></i>
+        </button>
+      </div>
+
+      <div class="wifi-card" onclick="copyWifiText('sushisea2024', this)">
+        <div class="wifi-card-info">
+          <span class="wifi-card-label" data-i18n="wifiPass">Password</span>
+          <span class="wifi-card-val">sushisea2024</span>
+        </div>
+        <button class="wifi-copy-btn-new">
+          <i class="far fa-copy"></i>
+        </button>
+      </div>
+
+      <button class="wifi-close-btn" onclick="closeModal('wifiModal')" data-i18n="close">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== AI WHATSAPP CHAT MODAL ===== -->
+<div class="modal-overlay" id="waModal" onclick="closeModalOutside(event,'waModal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <div class="modal-title" style="display:flex;align-items:center;gap:10px;">
+        <span style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--sea-blue-dark),var(--sea-blue));display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;"><i class="fas fa-robot"></i></span>
+        <div>
+          <div style="font-size:16px;font-weight:700;" data-i18n="aiAssistant">AI Assistant</div>
+          <div style="font-size:11px;color:#25d366;font-family:'Poppins',sans-serif;font-weight:400;">● Online</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('waModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="chat-wrap" id="chatWrap">
+        <div class="chat-msg bot" id="firstBotMsg">👋 Hello! I'm your Sushi Sea AI assistant. I can help you with our menu, ingredients, recommendations, or reservations. How can I help you?</div>
+      </div>
+      <div class="chat-input-wrap">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Ask me anything..." data-i18n-ph="chatPh" onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="chat-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">
+        <button onclick="quickChat(t('qBest'))" style="background:var(--glass);border:1px solid var(--glass-border);color:var(--text-light);font-size:11px;padding:6px 10px;border-radius:20px;cursor:pointer;font-family:'Poppins',sans-serif;" data-i18n="qBest">Best rolls?</button>
+        <button onclick="quickChat(t('qVeg'))" style="background:var(--glass);border:1px solid var(--glass-border);color:var(--text-light);font-size:11px;padding:6px 10px;border-radius:20px;cursor:pointer;font-family:'Poppins',sans-serif;" data-i18n="qVeg">Vegetarian?</button>
+        <button onclick="quickChat(t('qHours'))" style="background:var(--glass);border:1px solid var(--glass-border);color:var(--text-light);font-size:11px;padding:6px 10px;border-radius:20px;cursor:pointer;font-family:'Poppins',sans-serif;" data-i18n="qHours">Hours?</button>
+        <button onclick="quickChat(t('qReserve'))" style="background:var(--glass);border:1px solid var(--glass-border);color:var(--text-light);font-size:11px;padding:6px 10px;border-radius:20px;cursor:pointer;font-family:'Poppins',sans-serif;" data-i18n="qReserve">Reserve?</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ITEM DETAIL MODAL ===== -->
+<div class="modal-overlay" id="itemModal" onclick="closeModalOutside(event,'itemModal')">
+  <div class="modal-sheet" style="padding-bottom:12px;">
+    <div id="itemModalContent"></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="menu-data.js"></script>
+<script>
+// ============================================================
+// TRANSLATIONS
+// ============================================================
+const LANG_LABELS = {TR:'🇹🇷 Türkçe',EN:'🇬🇧 English',DE:'🇩🇪 Deutsch',RU:'🇷🇺 Русский'};
+const TRANSLATIONS = {
+  TR: {
+    tagline:'Japon · Füzyon · Rolls', menu:'Menü', seeAll:'Tüm yemekleri gör', reserve:'Rezervasyon',
+    bookTable:'Masa rezervasyonu', callWaiter:'Garson Çağır', fastService:'Hızlı servis',
+    freeInternet:'Ücretsiz internet', followUs:'Bizi takip edin', leaveReview:'Yorum yap',
+    googleReviews:'Google Yorumları', writeReview:'Yorum Yaz', seeAllCat:'Tümünü gör',
+    basedOn:'Google\'da 500+ yoruma dayanır', ourMenu:'Menümüz', searchPh:'Yemek ara...', persons:'Misafir Sayısı', date:'Tarih',
+    time:'Saat', fullName:'Ad Soyad', phone:'Telefon', special:'Özel İstek',
+    specialPh:'Alerji, doğum günü vs...', namePh:'Ad Soyad', bookNow:'Rezervasyon Yap',
+    successTitle:'Rezervasyon Alındı!', successSub:'Rezervasyonunuz iletildi. En kısa sürede size dönüş yapılacaktır.',
+    close:'Kapat', whichTable:'Hangi masadasınız?', selectTable:'Masa numaranızı seçin',
+    callNow:'Garson Çağır', sending:'Gönderiliyor...', waiterCalled:'Garson Geliyor!', waiterSub:'Garsonunuz kısa süre içinde yanınıza gelecektir. Bildirim garson telefonuna iletildi.',
+    callAgain:'Tekrar Çağır', wifiName:'Ağ Adı', wifiPass:'Şifre', aiAssistant:'AI Asistan',
+    chatPh:'Bir şeyler sorun...', qBest:'En iyi rolls?', qVeg:'Vejetaryen?', qHours:'Çalışma saatleri?', qReserve:'Rezervasyon?',
+    firstBotMsg:'👋 Merhaba! Sushi Sea AI asistanıyım. Menü, malzemeler, öneriler veya rezervasyon konusunda yardımcı olabilirim. Size nasıl yardımcı olabilirim?',
+    copied:'Kopyalandı',
+    sendWhatsApp:'WhatsApp ile Gönder',
+    sendSMS:'SMS ile Gönder'
+  },
+  EN: {
+    tagline:'Japanese · Fusion · Rolls', menu:'Menu', seeAll:'See all dishes', reserve:'Reservation',
+    bookTable:'Book a table', callWaiter:'Call Waiter', fastService:'Fast service',
+    freeInternet:'Free internet', followUs:'Follow us', leaveReview:'Leave a Review',
+    googleReviews:'Google Reviews', writeReview:'Write a Review', seeAllCat:'See all',
+    basedOn:'Based on 500+ Google reviews', ourMenu:'Our Menu', searchPh:'Search dishes...', persons:'Number of Guests', date:'Date',
+    time:'Time', fullName:'Full Name', phone:'Phone', special:'Special Requests',
+    specialPh:'Allergies, birthday, etc...', namePh:'John Doe', bookNow:'Book Now',
+    successTitle:'Reservation Received!', successSub:'Your reservation was sent. We\'ll confirm via phone shortly. Thank you!',
+    close:'Close', whichTable:'Which table are you at?', selectTable:'Select your table number',
+    callNow:'Call Waiter Now', sending:'Sending...', waiterCalled:'Waiter on the way!', waiterSub:'Your waiter will be with you shortly. A notification was sent to their phone.',
+    callAgain:'Call Again', wifiName:'Network Name', wifiPass:'Password', aiAssistant:'AI Assistant',
+    chatPh:'Ask me anything...', qBest:'Best rolls?', qVeg:'Vegetarian?', qHours:'Hours?', qReserve:'Reserve?',
+    firstBotMsg:'👋 Hello! I\'m your Sushi Sea AI assistant. I can help you with our menu, ingredients, recommendations, or reservations. How can I help you?',
+    copied:'Copied to clipboard!',
+    sendWhatsApp:'Send via WhatsApp',
+    sendSMS:'Send via SMS'
+  },
+  DE: {
+    tagline:'Japanisch · Fusion · Rolls', menu:'Speisekarte', seeAll:'Alle Gerichte sehen', reserve:'Reservierung',
+    bookTable:'Tisch reservieren', callWaiter:'Kellner rufen', fastService:'Schneller Service',
+    freeInternet:'Gratis Internet', followUs:'Folgt uns', leaveReview:'Bewertung hinterlassen',
+    googleReviews:'Google Bewertungen', writeReview:'Bewertung schreiben', seeAllCat:'Alle anzeigen',
+    basedOn:'Basierend auf 500+ Google-Bewertungen', ourMenu:'Unsere Speisekarte', searchPh:'Gerichte suchen...', persons:'Anzahl der Gäste', date:'Datum',
+    time:'Uhrzeit', fullName:'Vor- und Nachname', phone:'Telefon', special:'Besondere Wünsche',
+    specialPh:'Allergien, Geburtstag usw...', namePh:'Max Mustermann', bookNow:'Jetzt reservieren',
+    successTitle:'Reservierung erhalten!', successSub:'Ihre Reservierung wurde gesendet. Wir melden uns in Kürze.',
+    close:'Schließen', whichTable:'An welchem Tisch sitzen Sie?', selectTable:'Wählen Sie Ihre Tischnummer',
+    callNow:'Kellner rufen', sending:'Wird gesendet...', waiterCalled:'Kellner kommt!', waiterSub:'Ihr Kellner wird in Kürze bei Ihnen sein. Benachrichtigung wurde gesendet.',
+    callAgain:'Erneut rufen', wifiName:'Netzwerkname', wifiPass:'Passwort', aiAssistant:'KI-Assistent',
+    chatPh:'Fragen Sie mich...', qBest:'Beste Rolls?', qVeg:'Vegetarisch?', qHours:'Öffnungszeiten?', qReserve:'Reservieren?',
+    firstBotMsg:'👋 Hallo! Ich bin Ihr Sushi Sea KI-Assistent. Ich kann Ihnen bei unserem Menü, Zutaten, Empfehlungen oder Reservierungen helfen.',
+    copied:'Kopiert!',
+    sendWhatsApp:'Per WhatsApp senden',
+    sendSMS:'Per SMS senden'
+  },
+  RU: {
+    tagline:'Японский · Фьюжн · Роллы', menu:'Меню', seeAll:'Все блюда', reserve:'Резервация',
+    bookTable:'Забронировать стол', callWaiter:'Вызвать официанта', fastService:'Быстрый сервис',
+    freeInternet:'Бесплатный интернет', followUs:'Следите за нами', leaveReview:'Оставить отзыв',
+    googleReviews:'Отзывы Google', writeReview:'Написать отзыв', seeAllCat:'Смотреть все',
+    basedOn:'На основе 500+ отзывов Google', ourMenu:'Наше меню', searchPh:'Искать блюда...', persons:'Количество гостей', date:'Дата',
+    time:'Время', fullName:'Имя и фамилия', phone:'Телефон', special:'Особые пожелания',
+    specialPh:'Аллергии, день рождения и т.д...', namePh:'Иван Иванов', bookNow:'Забронировать',
+    successTitle:'Бронь получена!', successSub:'Ваша бронь отправлена. Мы свяжемся с вами в ближайшее время.',
+    close:'Закрыть', whichTable:'За каким столиком вы сидите?', selectTable:'Выберите номер стола',
+    callNow:'Вызвать официанта', sending:'Отправка...', waiterCalled:'Официант идёт!', waiterSub:'Ваш официант будет с вами через мгновение. Уведомление отправлено.',
+    callAgain:'Вызвать снова', wifiName:'Название сети', wifiPass:'Пароль', aiAssistant:'ИИ-Ассистент',
+    chatPh:'Задайте вопрос...', qBest:'Лучшие роллы?', qVeg:'Вегетарианское?', qHours:'Часы работы?', qReserve:'Забронировать?',
+    firstBotMsg:'👋 Привет! Я ИИ-ассистент Sushi Sea. Я могу помочь с меню, ингредиентами, рекомендациями или бронированием. Как я могу помочь?',
+    copied:'Скопировано!',
+    sendWhatsApp:'Отправить через WhatsApp',
+    sendSMS:'Отправить по SMS'
+  }
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let lang = 'TR';
+let activeCat = 'philadelphia';
+let selectedPersons = null;
+let selectedTime = null;
+let selectedTable = null;
+let reservationDate = new Date();
+reservationDate.setDate(reservationDate.getDate() + 1);
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  setLang('TR');
+  renderTableGrid();
+  updateDateDisplay();
+  initSwipeToDismiss();
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.lang-dropdown')) {
+      document.getElementById('langDropdown').classList.remove('open');
+    }
+  });
+  window.addEventListener('scroll', () => {
+    document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 300);
+  });
+});
+
+function toggleLangMenu(e) {
+  e.stopPropagation();
+  document.getElementById('langDropdown').classList.toggle('open');
+}
+
+// ============================================================
+// LANGUAGE
+// ============================================================
+function setLang(l) {
+  lang = l;
+  document.getElementById('langLabel').textContent = LANG_LABELS[l];
+  document.querySelectorAll('.lang-option').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === l);
+  });
+  document.getElementById('langDropdown').classList.remove('open');
+  applyTranslations();
+  renderCategoryTabs();
+  renderProducts(activeCat);
+  renderGoogleReviews();
+  document.getElementById('searchInput').value = '';
+  document.getElementById('chatInput').placeholder = t('chatPh');
+  document.getElementById('firstBotMsg').textContent = t('firstBotMsg');
+}
+
+function t(key) { return TRANSLATIONS[lang][key] || TRANSLATIONS['EN'][key] || key; }
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    el.textContent = t(key);
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    el.placeholder = t(el.getAttribute('data-i18n-ph'));
+  });
+}
+
+// ============================================================
+// GOOGLE REVIEWS
+// ============================================================
+function renderGoogleReviews() {
+  const card = document.getElementById('googleReviewsCard');
+  const stars = '<i class="fas fa-star"></i>'.repeat(5);
+  card.innerHTML = `
+    <div class="google-header">
+      <div class="google-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="22" height="22" style="display:block;">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.5 24c0-1.61-.15-3.16-.42-4.69H24v9.09h12.75c-.53 2.87-2.13 5.31-4.59 7.03l7.19 5.56c4.21-3.88 6.65-9.6 6.65-17z"/>
+          <path fill="#FBBC05" d="M10.54 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.98-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.19-5.56c-2.03 1.36-4.63 2.19-7.7 2.19-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+      </div>
+      <div class="google-score">
+        <div class="google-score-num">4.8</div>
+        <div class="google-stars">${stars}</div>
+        <div class="google-score-label">${t('basedOn')}</div>
+      </div>
+    </div>
+    <div class="review-slider" id="reviewSlider">
+      ${GOOGLE_REVIEWS.map(r => `
+        <div class="review-card">
+          <div class="review-card-head">
+            <span class="review-card-name">${r.name}</span>
+            <span class="review-card-date">${r.date}</span>
+          </div>
+          <div class="review-card-stars">${'<i class="fas fa-star"></i>'.repeat(r.rating)}</div>
+          <div class="review-card-text">${r.text[lang] || r.text.EN}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="slider-dots" id="sliderDots">
+      ${GOOGLE_REVIEWS.map((_, i) => `<span class="slider-dot${i===0?' active':''}"></span>`).join('')}
+    </div>
+    <a href="https://search.google.com/local/writereview?placeid=ChIJUV1FU9yZ3BQRKDeKKsYuxfc" target="_blank" class="google-write-btn">
+      <i class="fab fa-google"></i> ${t('writeReview')}
+    </a>
+  `;
+  const slider = document.getElementById('reviewSlider');
+  const dots = document.querySelectorAll('.slider-dot');
+  slider.addEventListener('scroll', () => {
+    const idx = Math.round(slider.scrollLeft / (slider.offsetWidth * 0.85));
+    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+  });
+}
+
+// ============================================================
+// MENU
+// ============================================================
+function renderMenuRow(item) {
+  return `
+    <div class="menu-row" onclick="openItemDetail(${item.id})">
+      <img class="menu-row-img" src="${item.img}" alt="${item.name}" loading="lazy">
+      <div class="menu-row-info">
+        <div class="menu-row-name">${item.name}</div>
+        <div class="menu-row-desc">${item.desc}</div>
+        <div class="menu-row-price">${item.price}</div>
+      </div>
+    </div>`;
+}
+
+function renderCategoryTabs() {
+  document.getElementById('catRow').innerHTML = CATEGORIES.map(c => `
+    <button class="cat-pill ${c.id === activeCat ? 'active' : ''}" onclick="selectCategory('${c.id}')">
+      ${c.label[lang] || c.label.EN}
+    </button>
+  `).join('');
+}
+
+function selectCategory(catId) {
+  activeCat = catId;
+  document.getElementById('searchInput').value = '';
+  renderCategoryTabs();
+  renderProducts(catId);
+  document.querySelector('.cat-scroll').style.display = '';
+  document.getElementById('catActiveTitle').style.display = '';
+  document.getElementById('menuProducts').style.display = '';
+  document.getElementById('searchResults').style.display = 'none';
+}
+
+function renderProducts(catId) {
+  const cat = CATEGORIES.find(c => c.id === catId);
+  const items = MENU_ITEMS.filter(i => i.cat === catId);
+  document.getElementById('catActiveTitle').textContent = cat ? (cat.label[lang] || cat.label.EN) : '';
+  const wrap = document.getElementById('menuProducts');
+  if (!items.length) {
+    wrap.innerHTML = `<div class="no-results"><i class="fas fa-utensils"></i><div>${lang==='TR'?'Ürün bulunamadı':lang==='DE'?'Keine Produkte':lang==='RU'?'Нет товаров':'No items'}</div></div>`;
+    return;
+  }
+  wrap.innerHTML = items.map(renderMenuRow).join('');
+}
+
+function filterMenu() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const productsWrap = document.getElementById('menuProducts');
+  const titleEl = document.getElementById('catActiveTitle');
+  const catScroll = document.querySelector('.cat-scroll');
+  const searchWrap = document.getElementById('searchResults');
+  if (!q) {
+    catScroll.style.display = '';
+    titleEl.style.display = '';
+    productsWrap.style.display = '';
+    searchWrap.style.display = 'none';
+    renderProducts(activeCat);
+    return;
+  }
+  const items = MENU_ITEMS.filter(i =>
+    i.name.toLowerCase().includes(q) || i.desc.toLowerCase().includes(q)
+  );
+  catScroll.style.display = 'none';
+  titleEl.style.display = 'none';
+  productsWrap.style.display = 'none';
+  searchWrap.style.display = '';
+  if (!items.length) {
+    searchWrap.innerHTML = `<div class="no-results"><i class="fas fa-search"></i><div>${lang==='TR'?'Sonuç bulunamadı':lang==='DE'?'Keine Ergebnisse':lang==='RU'?'Ничего не найдено':'No results found'}</div></div>`;
+    return;
+  }
+  searchWrap.innerHTML = `<div class="cat-items">${items.map(renderMenuRow).join('')}</div>`;
+}
+
+function scrollToMenu() {
+  document.getElementById('menuSection').scrollIntoView({behavior:'smooth'});
+}
+
+// ============================================================
+// ITEM DETAIL
+// ============================================================
+function openItemDetail(id) {
+  const item = MENU_ITEMS.find(i => i.id === id);
+  if (!item) return;
+  document.getElementById('itemModalContent').innerHTML = `
+    <img src="${item.img}" alt="${item.name}" style="width:100%;height:220px;object-fit:cover;border-radius:24px 24px 0 0;">
+    <div class="item-detail-body">
+      <div class="item-detail-name">${item.name}</div>
+      <div class="item-detail-desc">${item.desc}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="item-detail-price">${item.price}</div>
+        <div class="stars" style="font-size:14px;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+      </div>
+      <button class="btn-submit" style="margin-top:16px;" onclick="closeModal('itemModal')">${lang==='TR'?'Geri Dön':lang==='DE'?'Zurück':lang==='RU'?'Назад':'Back'}</button>
+    </div>
+  `;
+  openModal('itemModal');
+}
+
+// ============================================================
+// MODALS
+// ============================================================
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  const overlay = document.getElementById(id);
+  if (!overlay) return;
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+  
+  const sheet = overlay.querySelector('.modal-sheet');
+  if (sheet) {
+    sheet.style.transform = '';
+    sheet.style.transition = '';
+  }
+  
+  if (id === 'waiterModal') {
+    resetWaiter();
+  }
+}
+function closeModalOutside(e, id) {
+  if (e.target.id === id) closeModal(id);
+}
+function openWAChat(e) {
+  e.preventDefault();
+  openModal('waModal');
+}
+
+function copyWifiText(text, btn) {
+  const doCopy = () => {
+    showToast(t('copied'));
+  };
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(doCopy).catch(err => {
+      fallbackCopyText(text, doCopy);
+    });
+  } else {
+    fallbackCopyText(text, doCopy);
+  }
+}
+
+function fallbackCopyText(text, callback) {
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+  textArea.style.top = "0";
+  textArea.style.left = "0";
+  textArea.style.position = "fixed";
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    const successful = document.execCommand('copy');
+    if (successful) callback();
+  } catch (err) {
+    console.error('Fallback copy failed', err);
+  }
+  document.body.removeChild(textArea);
+}
+
+function showToast(message) {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.style.cssText = `
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: linear-gradient(135deg, var(--sea-blue-dark), var(--sea-blue));
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 8px 32px rgba(58, 180, 245, 0.35);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    `;
+    document.body.appendChild(container);
+  }
+  
+  container.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+  
+  // Force reflow
+  container.offsetHeight;
+  
+  container.style.opacity = '1';
+  container.style.transform = 'translateX(-50%) translateY(0)';
+  
+  clearTimeout(container.timeoutId);
+  container.timeoutId = setTimeout(() => {
+    container.style.opacity = '0';
+    container.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 2000);
+}
+
+// ============================================================
+// RESERVATION
+// ============================================================
+function selectPerson(n) {
+  selectedPersons = n;
+  document.querySelectorAll('.person-btn').forEach(b => {
+    b.classList.toggle('selected', parseInt(b.textContent) === n || b.textContent === n+'');
+  });
+}
+function selectTime(t) {
+  selectedTime = t;
+  document.querySelectorAll('.time-btn').forEach(b => {
+    b.classList.toggle('selected', b.textContent === t);
+  });
+}
+
+let reservDateOffset = 1;
+function updateDateDisplay() {
+  const d = new Date();
+  d.setDate(d.getDate() + reservDateOffset);
+  reservationDate = d;
+  const opts = {weekday:'long',month:'long',day:'numeric'};
+  const localeMap = {TR:'tr-TR',EN:'en-US',DE:'de-DE',RU:'ru-RU'};
+  document.getElementById('dateDisplay').textContent = d.toLocaleDateString(localeMap[lang]||'en-US', opts);
+}
+function changeDate(dir) {
+  const min = 0, max = 30;
+  const next = reservDateOffset + dir;
+  if (next < min || next > max) return;
+  reservDateOffset = next;
+  updateDateDisplay();
+}
+
+async function submitReservation() {
+  const name = document.getElementById('resName').value.trim();
+  const phone = document.getElementById('resPhone').value.trim();
+  const email = document.getElementById('resEmail').value.trim();
+  const note = document.getElementById('resNote').value.trim();
+  if (!selectedPersons) { alert(lang==='TR'?'Lütfen kişi sayısı seçin':lang==='DE'?'Bitte Personenanzahl wählen':lang==='RU'?'Пожалуйста, выберите количество гостей':'Please select number of guests'); return; }
+  if (!selectedTime) { alert(lang==='TR'?'Lütfen saat seçin':lang==='DE'?'Bitte Uhrzeit wählen':lang==='RU'?'Пожалуйста, выберите время':'Please select a time'); return; }
+  if (!name) { alert(lang==='TR'?'Ad soyad gerekli':lang==='DE'?'Name erforderlich':lang==='RU'?'Имя обязательно':'Name is required'); return; }
+  if (!phone) { alert(lang==='TR'?'Telefon numarası gerekli':lang==='DE'?'Telefonnummer erforderlich':lang==='RU'?'Telefon обязателен':'Phone number is required'); return; }
+
+  const dateStr = reservationDate.toLocaleDateString(lang==='TR'?'tr-TR':lang==='DE'?'de-DE':lang==='RU'?'ru-RU':'en-US');
+  const guestsLabel = lang==='TR'?'kişi':lang==='DE'?'Pers.':lang==='RU'?'чел.':'guests';
+
+  const btn = document.getElementById('btnSubmitReserve');
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${t('sending')}`;
+  await sendReservationNotification({ name, phone, email, note, persons: selectedPersons, time: selectedTime, date: dateStr });
+  btn.disabled = false;
+  btn.textContent = t('bookNow');
+
+  document.getElementById('resSummary').innerHTML = `
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">Summary</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;">
+      <div><i class="fas fa-user" style="color:var(--text-muted)"></i> ${name}</div>
+      <div><i class="fas fa-phone" style="color:var(--text-muted)"></i> ${phone}</div>
+      <div><i class="fas fa-users" style="color:var(--text-muted)"></i> ${selectedPersons} ${guestsLabel}</div>
+      <div><i class="fas fa-clock" style="color:var(--text-muted)"></i> ${selectedTime}</div>
+      <div style="grid-column:1/-1"><i class="fas fa-calendar" style="color:var(--text-muted)"></i> ${dateStr}</div>
+      ${email ? `<div style="grid-column:1/-1"><i class="fas fa-envelope" style="color:var(--text-muted)"></i> ${email}</div>` : ''}
+      ${note ? `<div style="grid-column:1/-1"><i class="fas fa-comment" style="color:var(--text-muted)"></i> ${note}</div>` : ''}
+    </div>
+  `;
+
+  // Construct direct WhatsApp and SMS messages for Owner
+  const labels = {
+    TR: { title: 'Yeni Rezervasyon', name: 'Ad Soyad', phone: 'Telefon', guests: 'Misafir', date: 'Tarih', time: 'Saat', email: 'E-posta', note: 'Not' },
+    EN: { title: 'New Reservation', name: 'Full Name', phone: 'Phone', guests: 'Guests', date: 'Date', time: 'Time', email: 'Email', note: 'Note' },
+    DE: { title: 'Neue Reservierung', name: 'Name', phone: 'Tel', guests: 'Gäste', date: 'Datum', time: 'Uhrzeit', email: 'E-Mail', note: 'Hinweis' },
+    RU: { title: 'Новая бронь', name: 'Имя', phone: 'Тел', guests: 'Гостей', date: 'Дата', time: 'Время', email: 'Email', note: 'Заметка' }
+  };
+  const L = labels[lang] || labels.EN;
+  
+  let waMsg = `*📅 Sushi Sea — ${L.title}*\n\n` +
+              `• *${L.name}:* ${name}\n` +
+              `• *${L.phone}:* ${phone}\n` +
+              `• *${L.guests}:* ${selectedPersons} ${guestsLabel}\n` +
+              `• *${L.date}:* ${dateStr}\n` +
+              `• *${L.time}:* ${selectedTime}`;
+  if (email) waMsg += `\n• *${L.email}:* ${email}`;
+  if (note) waMsg += `\n• *${L.note}:* ${note}`;
+
+  let smsMsg = `📅 Sushi Sea — ${L.title}\n` +
+               `${L.name}: ${name}\n` +
+               `${L.phone}: ${phone}\n` +
+               `${L.guests}: ${selectedPersons} ${guestsLabel}\n` +
+               `${L.date}: ${dateStr}\n` +
+               `${L.time}: ${selectedTime}`;
+  if (email) smsMsg += `\n${L.email}: ${email}`;
+  if (note) smsMsg += `\n${L.note}: ${note}`;
+
+  const waUrl = `https://wa.me/${WAITER_CONFIG.phone}?text=${encodeURIComponent(waMsg)}`;
+  document.getElementById('btnReserveWA').href = waUrl;
+
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const smsUrl = `sms:${WAITER_CONFIG.phone}${isIOS ? '&' : '?'}body=${encodeURIComponent(smsMsg)}`;
+  document.getElementById('btnReserveSMS').href = smsUrl;
+
+  document.getElementById('reserveForm').style.display = 'none';
+  document.getElementById('reserveSuccess').style.display = 'block';
+
+  // Automatically launch WhatsApp redirect
+  setTimeout(() => {
+    window.open(waUrl, '_blank');
+  }, 300);
+}
+
+// ============================================================
+// WAITER
+// ============================================================
+function renderTableGrid() {
+  const grid = document.getElementById('tableGrid');
+  grid.innerHTML = Array.from({length:20},(_,i)=>`
+    <button class="table-no" onclick="selectTable(${i+1})">${i+1}</button>
+  `).join('');
+}
+function selectTable(n) {
+  selectedTable = n;
+  document.querySelectorAll('.table-no').forEach((b,i) => b.classList.toggle('selected', i+1===n));
+}
+async function sendCallMeBotWhatsApp(message) {
+  const phone = WAITER_CONFIG.phone;
+  const apikey = WAITER_CONFIG.callMeBotApiKey;
+  const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(message)}&apikey=${apikey}`;
+
+  if (location.protocol.startsWith('http')) {
+    try {
+      const res = await fetch(url);
+      const txt = await res.text();
+      if (/queued|Message to/i.test(txt)) return true;
+    } catch (e) { console.warn('CallMeBot fetch:', e); }
+  }
+
+  sendGetBeacon(url);
+  return true;
+}
+
+async function sendNtfyNotification(topic, title, body, tags) {
+  const url = `https://ntfy.sh/${topic}?message=${encodeURIComponent(body)}&title=${encodeURIComponent(title)}&priority=5&tags=${encodeURIComponent(tags)}`;
+  try {
+    const res = await fetch(url, { method: 'POST' });
+    if (res.ok) return true;
+  } catch (e) {
+    console.warn('ntfy fetch failed:', e);
+  }
+
+  sendGetBeacon(url);
+  return true;
+}
+
+function sendGetBeacon(url) {
+  // 1. Image Beacon (Ignores CORS and Frame headers completely)
+  const img = new Image();
+  img.src = url;
+
+  // 2. Iframe Fallback
+  try {
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:fixed;width:0;height:0;border:0;opacity:0;pointer-events:none';
+    iframe.src = url;
+    document.body.appendChild(iframe);
+    setTimeout(() => { if (iframe.parentNode) iframe.remove(); }, 3000);
+  } catch (e) {
+    console.warn('Iframe fallback failed:', e);
+  }
+}
+
+async function sendStaffNotification(title, body, tags = 'bell') {
+  const tasks = [];
+
+  if (WAITER_CONFIG.ntfyEnabled && WAITER_CONFIG.ntfyTopic) {
+    tasks.push(sendNtfyNotification(WAITER_CONFIG.ntfyTopic, title, body, tags));
+  }
+
+  if (WAITER_CONFIG.callMeBotEnabled && WAITER_CONFIG.callMeBotApiKey) {
+    const waText = `${title}\n${body}`;
+    tasks.push(sendCallMeBotWhatsApp(waText));
+  }
+
+  await Promise.all(tasks);
+}
+
+async function sendWaiterNotification(tableNo) {
+  const locale = {TR:'tr-TR',EN:'en-US',DE:'de-DE',RU:'ru-RU'}[lang] || 'en-US';
+  const time = new Date().toLocaleTimeString(locale, {hour:'2-digit', minute:'2-digit'});
+  const labels = {
+    TR: { title: 'Garson Çağrısı', table: 'Masa' },
+    EN: { title: 'Waiter Call', table: 'Table' },
+    DE: { title: 'Kellner-Ruf', table: 'Tisch' },
+    RU: { title: 'Вызов официанта', table: 'Стол' }
+  };
+  const L = labels[lang] || labels.EN;
+  await sendStaffNotification(`🛎️ Sushi Sea — ${L.title}`, `${L.table} ${tableNo} · ${time}`, 'bell');
+}
+
+async function sendReservationNotification(data) {
+  const labels = {
+    TR: { title: 'Yeni Rezervasyon', name: 'Ad', phone: 'Tel', guests: 'Kişi', date: 'Tarih', time: 'Saat', email: 'E-posta', note: 'Not' },
+    EN: { title: 'New Reservation', name: 'Name', phone: 'Phone', guests: 'Guests', date: 'Date', time: 'Time', email: 'Email', note: 'Note' },
+    DE: { title: 'Neue Reservierung', name: 'Name', phone: 'Tel', guests: 'Gäste', date: 'Datum', time: 'Uhrzeit', email: 'E-Mail', note: 'Hinweis' },
+    RU: { title: 'Новая бронь', name: 'Имя', phone: 'Тел', guests: 'Гостей', date: 'Дата', time: 'Время', email: 'Email', note: 'Заметка' }
+  };
+  const L = labels[lang] || labels.EN;
+  let body = `${L.name}: ${data.name}\n${L.phone}: ${data.phone}\n${L.guests}: ${data.persons}\n${L.date}: ${data.date}\n${L.time}: ${data.time}`;
+  if (data.email) body += `\n${L.email}: ${data.email}`;
+  if (data.note) body += `\n${L.note}: ${data.note}`;
+  await sendStaffNotification(`📅 Sushi Sea — ${L.title}`, body, 'calendar');
+}
+
+async function callWaiter() {
+  if (!selectedTable) {
+    alert(lang==='TR'?'Lütfen masa seçin':lang==='DE'?'Bitte Tisch wählen':lang==='RU'?'Выберите стол':'Please select a table');
+    return;
+  }
+
+  const audio = new Audio('bell.mp3');
+  audio.play().catch(e => console.warn('Audio play blocked/failed:', e));
+
+  const btn = document.getElementById('btnCallWaiter');
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${t('sending')}`;
+  await sendWaiterNotification(selectedTable);
+  btn.disabled = false;
+  btn.textContent = t('callNow');
+
+  document.getElementById('waiterDefault').style.display = 'none';
+  document.getElementById('waiterSuccess').style.display = 'block';
+}
+function resetWaiter() {
+  selectedTable = null;
+  renderTableGrid();
+  document.getElementById('waiterDefault').style.display = 'block';
+  document.getElementById('waiterSuccess').style.display = 'none';
+}
+
+// ============================================================
+// AI CHAT (Local assistant — no API key required)
+// ============================================================
+const AI_RESPONSES = {
+  TR: {
+    greeting: 'Merhaba! Sushi Sea asistanıyım. Menü, öneriler, çalışma saatleri veya rezervasyon hakkında sorabilirsiniz.',
+    best: 'En çok sevilenlerimiz: Philadelphia Lüx (₺410), Dragon Mix 2 (₺500) ve Set 1 Philadelphia Family (₺1.500). Hepsini denemenizi öneririm!',
+    veg: 'Vejetaryen seçenekler: Hoso Hoppa (₺150), Haiku Crab (₺300) ve Chips (₺250). Salatalık ve sebze dolgulu rollarımız da mevcut.',
+    hours: 'Her gün 12:00 – 23:00 arası açığız. Antalya\'da hizmet veriyoruz. Rezervasyon için +90 544 689 3142.',
+    reserve: 'Rezervasyon için üst menüdeki "Rezervasyon" butonuna tıklayın veya bizi +90 544 689 3142 numarasından arayın.',
+    wifi: 'Wi-Fi: Ağ adı SushiSea_Guest, şifre sushisea2024. Ücretsiz!',
+    price: 'Fiyatlarımız ₺70 (içecekler) ile ₺1.650 (set menüler) arasında değişiyor. Detaylar için menüye göz atın.',
+    default: 'Size yardımcı olmaktan mutluluk duyarım! Menü önerisi, çalışma saatleri, Wi-Fi veya rezervasyon hakkında sorabilirsiniz.'
+  },
+  EN: {
+    greeting: 'Hello! I\'m the Sushi Sea assistant. Ask me about our menu, recommendations, hours, or reservations.',
+    best: 'Our most popular items: Philadelphia Lüx (₺410), Dragon Mix 2 (₺500), and Set 1 Philadelphia Family (₺1,500). Highly recommended!',
+    veg: 'Vegetarian options: Hoso Hoppa (₺150), Haiku Crab (₺300), and Chips (₺250). We also have cucumber-filled rolls.',
+    hours: 'We\'re open daily from 12:00 to 23:00 in Antalya, Turkey. Call +90 544 689 3142 for reservations.',
+    reserve: 'Tap the "Reservation" button at the top, or call us at +90 544 689 3142 to book a table.',
+    wifi: 'Wi-Fi: Network SushiSea_Guest, password sushisea2024. Free for all guests!',
+    price: 'Our prices range from ₺70 (drinks) to ₺1,650 (family sets). Check the menu for details.',
+    default: 'Happy to help! Ask me about menu recommendations, opening hours, Wi-Fi, or reservations.'
+  },
+  DE: {
+    greeting: 'Hallo! Ich bin der Sushi Sea Assistent. Fragen Sie mich nach Speisekarte, Empfehlungen, Öffnungszeiten oder Reservierungen.',
+    best: 'Beliebteste Gerichte: Philadelphia Lüx (₺410), Dragon Mix 2 (₺500) und Set 1 Philadelphia Family (₺1.500).',
+    veg: 'Vegetarische Optionen: Hoso Hoppa (₺150), Haiku Crab (₺300) und Chips (₺250).',
+    hours: 'Täglich geöffnet von 12:00 bis 23:00 in Antalya. Reservierung: +90 544 689 3142.',
+    reserve: 'Tippen Sie auf "Reservierung" oben oder rufen Sie +90 544 689 3142 an.',
+    wifi: 'WLAN: Netzwerk SushiSea_Guest, Passwort sushisea2024. Kostenlos!',
+    price: 'Preise von ₺70 (Getränke) bis ₺1.650 (Familien-Sets).',
+    default: 'Gerne helfe ich! Fragen Sie nach Empfehlungen, Öffnungszeiten, WLAN oder Reservierungen.'
+  },
+  RU: {
+    greeting: 'Привет! Я ассистент Sushi Sea. Спрашивайте о меню, рекомендациях, часах работы или бронировании.',
+    best: 'Популярные блюда: Philadelphia Lüx (₺410), Dragon Mix 2 (₺500) и Set 1 Philadelphia Family (₺1.500).',
+    veg: 'Вегетарианские варианты: Hoso Hoppa (₺150), Haiku Crab (₺300) и Chips (₺250).',
+    hours: 'Открыты ежедневно с 12:00 до 23:00 в Анталии. Бронирование: +90 544 689 3142.',
+    reserve: 'Нажмите «Резервация» вверху или позвоните +90 544 689 3142.',
+    wifi: 'Wi-Fi: сеть SushiSea_Guest, пароль sushisea2024. Бесплатно!',
+    price: 'Цены от ₺70 (напитки) до ₺1.650 (семейные сеты).',
+    default: 'Рад помочь! Спрашивайте о рекомендациях, часах работы, Wi-Fi или бронировании.'
+  }
+};
+
+function getAIResponse(msg) {
+  const m = msg.toLowerCase();
+  const r = AI_RESPONSES[lang] || AI_RESPONSES.EN;
+  
+  if (/merhaba|hello|hi|hallo|привет|selam|nasıl/.test(m)) return r.greeting;
+  if (/best|en iyi|öneri|empfehl|лучш|en çok|tavsiye/.test(m)) return r.best;
+  if (/veg|vejet|vegetar|вегет|sebze/.test(m)) return r.veg;
+  if (/hour|saat|öffnung|час|açık|open|çalış|zaman/.test(m)) return r.hours;
+  if (/reserv|rezerv|book|брон|masa|yer ayırt/.test(m)) return r.reserve;
+  if (/wifi|wi-fi|internet|wlan|şifre|password|bağlan/.test(m)) return r.wifi;
+  if (/price|fiyat|preis|цена|ücret|cost|tutar|kaç para/.test(m)) return r.price;
+
+  // Smart menu item search: check if any menu item name has a high overlap with the query words
+  const queryWords = m.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "").split(/\s+/).filter(w => w.length > 2);
+  let bestMatch = null;
+  let maxMatches = 0;
+
+  for (const item of MENU_ITEMS) {
+    const itemLower = item.name.toLowerCase();
+    const descLower = item.desc.toLowerCase();
+    
+    // Direct match of the whole item name
+    if (m.includes(itemLower) || itemLower.includes(m)) {
+      bestMatch = item;
+      break;
+    }
+
+    // Word overlap match
+    let matches = 0;
+    for (const word of queryWords) {
+      if (itemLower.includes(word) || descLower.includes(word)) {
+        matches++;
+      }
+    }
+    
+    if (matches > maxMatches) {
+      maxMatches = matches;
+      bestMatch = item;
+    }
+  }
+
+  if (bestMatch && (maxMatches > 0 || m.includes(bestMatch.name.toLowerCase()))) {
+    return `${bestMatch.name}: ${bestMatch.desc}. ${bestMatch.price}`;
+  }
+
+  return r.default;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  appendMsg('user', msg);
+  showTyping();
+  await new Promise(r => setTimeout(r, 500 + Math.random() * 400));
+  const reply = getAIResponse(msg);
+  hideTyping();
+  appendMsg('bot', reply);
+}
+
+function quickChat(msg) {
+  document.getElementById('chatInput').value = msg;
+  sendChat();
+}
+
+function appendMsg(role, text) {
+  const wrap = document.getElementById('chatWrap');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${role}`;
+  div.textContent = text;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+let typingEl = null;
+function showTyping() {
+  const wrap = document.getElementById('chatWrap');
+  typingEl = document.createElement('div');
+  typingEl.className = 'chat-typing';
+  typingEl.innerHTML = '<span></span><span></span><span></span>';
+  wrap.appendChild(typingEl);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+function hideTyping() {
+  if (typingEl) { typingEl.remove(); typingEl = null; }
+}
+
+function initSwipeToDismiss() {
+  document.querySelectorAll('.modal-sheet').forEach(sheet => {
+    const handle = sheet.querySelector('.modal-handle') || sheet.querySelector('.modal-head');
+    if (!handle) return;
+
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+    const overlay = sheet.closest('.modal-overlay');
+
+    const onStart = (e) => {
+      if (e.target.closest('button, input, select, textarea, a, .wifi-card, .wifi-copy-btn-new')) return;
+      startY = e.touches ? e.touches[0].clientY : e.clientY;
+      currentY = startY;
+      isDragging = true;
+      sheet.style.transition = 'none';
+      overlay.style.transition = 'background-color 0.1s';
+    };
+
+    const onMove = (e) => {
+      if (!isDragging) return;
+      if (e.cancelable) e.preventDefault();
+      
+      currentY = e.touches ? e.touches[0].clientY : e.clientY;
+      const dY = currentY - startY;
+
+      if (dY > 0) {
+        sheet.style.transform = `translateY(${dY}px)`;
+        const opacity = Math.max(0, 0.75 - (dY / 400));
+        overlay.style.backgroundColor = `rgba(0, 0, 0, ${opacity})`;
+      } else {
+        sheet.style.transform = `translateY(${dY * 0.15}px)`;
+      }
+    };
+
+    const onEnd = () => {
+      if (!isDragging) return;
+      isDragging = false;
+      const dY = currentY - startY;
+      
+      sheet.style.transition = '';
+      overlay.style.transition = '';
+      overlay.style.backgroundColor = '';
+
+      if (dY > 120) {
+        closeModal(overlay.id);
+      } else {
+        sheet.style.transform = '';
+      }
+      startY = 0;
+      currentY = 0;
+    };
+
+    handle.addEventListener('touchstart', onStart, { passive: true });
+    window.addEventListener('touchmove', onMove, { passive: false });
+    window.addEventListener('touchend', onEnd);
+
+    handle.addEventListener('mousedown', onStart);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onEnd);
+  });
+}
+</script>
+</body>
+</html>
